@@ -113,16 +113,13 @@ def set_genmcv_config(config):
         config.set('GenMCV', 'root', genMCV_script)
         config.set('GenMCV', 'folder', genMCV_path)
         config.set('GenMCV', 'templates', genMCV_path + 'templates')
-    
+
+
 class objData(object):
     def __init__(self, appl_name, object_name):
-        sys.path.append('./web2py')
-#    sys.path.append('/home/graham/python-dev/plants1/web2py')
-#    sys.path.append('/home/graham/staff/plants1/web2py')
-#   sys.path.append('/home/graham/staff/plants1/web2py/applications/plants/modules')
-#    print sys.path
-        self.app_root = '/' + appl_name + '/'
-        self.appl_file_path = './web2py/applications/' + appl_name + '/'
+        sys.path.append('.' + SLASH + 'web2py')
+        self.app_root = SLASH + appl_name + SLASH
+        self.appl_file_path = '.' + SLASH + 'web2py' + SLASH + 'applications' + SLASH + appl_name + SLASH
         self.obj_name = object_name
         self.obj_Name = self.obj_name[0].upper() + self.obj_name[1:]
 #    obj_Name = obj_name.capitalize()
@@ -236,9 +233,12 @@ def gview(appl_name, object_name):
 #
 # first check is the model's sub=directory in views exists, create it if not...
 #
-    outdir = appl_file_path + 'views/' + tname
-    if not os.path.exists(outdir):
-            os.makedirs(outdir)
+    outdir = appl_file_path + 'views' + SLASH + tname
+    try:
+        os.makedirs(outdir, exist_ok=True)
+    except FileExistsError:
+        # directory already exists
+        pass
 #
 # 1. list: this is just a list of the objects
 # -------------------------------------------------
@@ -338,8 +338,7 @@ def gview(appl_name, object_name):
 #    print list_str
 #    viewfile = open('../templates/views/index.html', 'r')
 #    view = viewfile.read()
-    outfile = open(appl_file_path + 'views/' + tname + '/list.html', 'w')
-#    outfile = open('./web2py/applications/plants/views/' + tname + '/index.html', 'w')
+    outfile = open(appl_file_path + 'views' + SLASH + tname + SLASH + 'list.html', 'w')
     for ent in list_str1_1:
         outfile.write(ent)
     for ent in list_str1_2:
@@ -371,7 +370,7 @@ var """ + obj_name + """LoadedFromOwner = false;
 {{include '""" + obj_name + """/list.html'}}
 </div>""")
 
-    outfile = open(appl_file_path + 'views/' + tname + '/index.html', 'w')
+    outfile = open(appl_file_path + 'views' + SLASH + tname + SLASH + 'index.html', 'w')
 #    outfile = open('./web2py/applications/plants/views/' + tname + '/index.html', 'w')
     for ent in index_str:
         outfile.write(ent)
@@ -404,7 +403,7 @@ var """ + obj_name + """LoadedFromSelect = true;
 </fieldset>
 </div>
 """)
-    outfile = open(appl_file_path + 'views/' + tname + '/select.html', 'w')
+    outfile = open(appl_file_path + 'views' + SLASH + tname + SLASH + 'select.html', 'w')
 #    outfile = open('./web2py/applications/plants/views/' + tname + '/index.html', 'w')
     for ent in select_str1_1:
         outfile.write(ent)
@@ -661,7 +660,7 @@ $(function() {
 </div>
 """)
 
-    outfile = open(appl_file_path + 'views/' + tname + '/create.html', 'w')
+    outfile = open(appl_file_path + 'views' + SLASH + tname + SLASH + 'create.html', 'w')
     for ent in cr_str:
         outfile.write(ent)
     for ent in ho_div_str:
@@ -717,7 +716,7 @@ $(function() {
 </div>
 """)
 
-    outfile = open(appl_file_path + 'views/' + tname + '/amend.html', 'w')
+    outfile = open(appl_file_path + 'views' + SLASH + tname + SLASH + 'amend.html', 'w')
     for ent in am_str:
         outfile.write(ent)
     for ent in ho_div_str:
@@ -815,7 +814,7 @@ $(function() {
     sh_str.append("""</fieldset>
 </div>
 """)
-    outfile = open(appl_file_path + 'views/' + tname + '/show.html', 'w')
+    outfile = open(appl_file_path + 'views' + SLASH + tname + SLASH + 'show.html', 'w')
     for ent in sh_str:
 #        print type(ent)
         if isinstance(ent, str):
@@ -953,12 +952,10 @@ onclick="doPopOwned""" + obj_Name + """('delete', '{{=arow['id']}}'); return fal
 </div>
 """)
 
-        outfile = open(appl_file_path + 'views/' + tname + '/get_all_for_owner.html', 'w')
+        outfile = open(appl_file_path + 'views' + SLASH + tname + SLASH + 'get_all_for_owner.html', 'w')
         for ent in gafo_str:
             outfile.write(ent)
         outfile.close()
-
-
     return
 
 def gcontr(appl_name, object_name):
@@ -966,9 +963,9 @@ def gcontr(appl_name, object_name):
     lobj_n = object_name
     lobj_N = objD.obj_Name
 #    lobj_N = object_name.capitalize()
-    cfile = open('./gener/templates/controller.py', 'r')
+    cfile = open('.' + SLASH + 'GenMCV' + SLASH + 'templates' + SLASH + 'controller.py', 'r')
+    outfile = open('.' + SLASH + 'web2py' + SLASH + 'applications' + SLASH + appl_name + SLASH + 'controllers' + SLASH + object_name + '.py', 'w')
     cont = cfile.read()
-    outfile = open('./web2py/applications/' + appl_name + '/controllers/' + object_name + '.py', 'w')
     fields_to_use = dict(obj_name=lobj_n, obj_Name=lobj_N)
     g1controller = Template(cont).substitute(fields_to_use)
 #    print gcontroller
@@ -1058,20 +1055,28 @@ def gcontr(appl_name, object_name):
 
 def gmodel(appl_name, object_name):
 #    objD = objData(appl_name, object_name)
+    #MB: Have to have the smodel.py file in each apps /modules folder
+    try:
+        modulePath = str(w2p_apps) + SLASH + appl_name + SLASH + 'modules' + SLASH + 'smodel.py'
+        if not Path(modulePath).exists():
+            copyfile(str(genMCV_templates) + SLASH + 'smodel.py', modulePath)
+    except FileExistsError:
+        # directory already exists
+        pass
     lobj_n = object_name
     lobj_N = lobj_n[0].upper() + lobj_n[1:]
 #    lobj_N = objD.obj_Name
 #    lobj_N = object_name.capitalize()
-    mfile = open('./gener/templates/model.py', 'r')
+    mfile = open('.' + SLASH + 'GenMCV' + SLASH + 'templates' + SLASH + 'model.py', 'r')
+    outfile = open('.' + SLASH + 'web2py' + SLASH + 'applications' + SLASH + appl_name + SLASH
+                   + 'modules' + SLASH + object_name + '.py', 'w')
     cont = mfile.read()
-    outfile = open('./web2py/applications/' + appl_name + '/modules/' + object_name + '.py', 'w')
     fields_to_use = dict(obj_name=lobj_n, obj_Name=lobj_N)
     gmodel = Template(cont).substitute(fields_to_use)
 #    print gmodel
     outfile.write(gmodel)
     outfile.close()
     mfile.close()
-
     return
 
 print 'Gener can create a skeleton model (in the modules directory) and controller'
