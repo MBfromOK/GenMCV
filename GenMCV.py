@@ -1,6 +1,10 @@
 __author__ = 'graham'
 
+from definitions import ROOT_DIR, CONFIG_PATH, SLASH
+from configparser import ConfigParser
+from itertools import chain, repeat
 from string import Template
+from pathlib import Path
 import importlib
 import sys
 import os
@@ -8,10 +12,108 @@ import os
 # generator for web2py views
 # in web2py the code should be in or run from the project's directory, ie the top level as created by PyCharm
 #  the paths in the code take this location into account
-# NOTE the templates directory should also be in the same location: /project/templates
+# NOTE the templates directory should also be in the same location: /project/GenMCV/templates
 #
 
 
+config = ConfigParser()
+print("======================================================================================================")
+print("\nVerifying files are where they belong...")
+if Path(CONFIG_PATH, 'config.ini').is_file():
+    config.read(Path(CONFIG_PATH, 'config.ini'))
+    osType = Path(config.get('Main', 'osType'))
+    w2p_loc = Path(config.get('Web2Py', 'root'))
+    w2p_fldr = Path(config.get('Web2Py', 'folder'))
+    w2p_apps = Path(config.get('Web2Py', 'apps'))
+    w2p_scripts = Path(config.get('Web2Py', 'scripts'))
+    w2p_packs = Path(config.get('Web2Py', 'site-packages'))
+    genMCV_loc = Path(config.get('GenMCV', 'root'))
+    genMCV_fldr = Path(config.get('GenMCV', 'folder'))
+    genMCV_templates = Path(config.get('GenMCV', 'templates'))
+    print("\tConfig Loaded...\n")
+    print("======================================================================================================")
+else:
+    print("\tNo Config file found...Building")
+    config.read(CONFIG_PATH)
+    config.add_section('Main')
+    if SLASH == '\\':
+        config.set('Main', 'osType', 'Windows')
+    else:
+        config.set('Main', 'osType', '*nix')
+    config.add_section('Web2Py')
+    if os.path.exists(ROOT_DIR + SLASH + 'web2py'):
+        print('GenMCV found a web2py folder at: ' + ROOT_DIR + SLASH + 'web2py.')
+        answers = {'y', 'n', ''}
+        prompts = chain(['Would you like to use this folder? [Y/n]'],
+                        repeat('Would you like to use ' + ROOT_DIR + SLASH + 'web2py? [Y/n]'))
+        replies = map(input, prompts)
+        w2p = next(filter(answers.__contains__, replies))
+        if w2p == 'y' or w2p == '':
+            config.set('Web2Py', 'root', ROOT_DIR + SLASH)
+            config.set('Web2Py', 'folder', ROOT_DIR + SLASH + 'web2py')
+            config.set('Web2Py', 'apps', ROOT_DIR + SLASH + 'web2py' + SLASH + 'applications')
+            config.set('Web2Py', 'scripts', ROOT_DIR + SLASH + 'web2py' + SLASH + 'scripts')
+            config.set('Web2Py', 'site-packages', ROOT_DIR + SLASH + 'web2py' + SLASH + 'site-packages')
+        else:
+            set_web2py_config(config)
+    else:
+        set_web2py_config(config)
+    if os.path.exists(ROOT_DIR + SLASH + 'GenMCV'):
+        print('GenMCV found a GenMCV folder at: ' + ROOT_DIR + SLASH + 'GenMCV')
+        answers = {'y', 'n', ''}
+        prompts = chain(['Would you like to use this folder? [Y/n]'],
+                        repeat('Would you like to use ' + ROOT_DIR + SLASH + 'GenMCV? [Y/n]'))
+        replies = map(input, prompts)
+        GenMCV = next(filter(answers.__contains__, replies))
+        if GenMCV == 'y' or GenMCV == '':
+            config.set('GenMCV', 'root', ROOT_DIR + SLASH)
+            config.set('GenMCV', 'folder', ROOT_DIR + SLASH + 'GenMCV' + SLASH)
+            config.set('GenMCV', 'templates', ROOT_DIR + SLASH + 'GenMCV' + SLASH + 'templates' + SLASH)
+        else:
+            set_genmcv_config(config)
+    else:
+        set_genmcv_config(config)
+    with open(CONFIG_PATH, 'w') as f:
+        config.write(f)
+    print("\t\tConfig File Created\n")
+    print("======================================================================================================")
+
+
+def set_web2py_config(config):
+    w2p_path = input(
+        'Please provide the full path to the web2py folder: '
+        ' \n\t\tWARNING: Not Validated!!!'
+    )
+    if w2p_path[len(w2p_path) - len(SLASH):len(w2p_path)] != SLASH:
+        config.set('Web2Py', 'root', w2p_path + SLASH)
+        config.set('Web2Py', 'apps', w2p_path + SLASH + 'applications' + SLASH)
+        config.set('Web2Py', 'scripts', w2p_path + SLASH + 'scripts' + SLASH)
+        config.set('Web2Py', 'site-packages', w2p_path + SLASH + 'site-packages' + SLASH)
+    else:
+        config.set('Web2Py', 'root', w2p_path)
+        config.set('Web2Py', 'apps', w2p_path + 'applications' + SLASH)
+        config.set('Web2Py', 'scripts', w2p_path + 'scripts' + SLASH)
+        config.set('Web2Py', 'site-packages', w2p_path + 'site-packages' + SLASH)
+
+
+def set_genmcv_config(config):
+    genMCV_script = input(
+        'Please provide the full path to the GenMCV.py file: '
+        ' \n\t\tWARNING: Not Validated!!!'
+    )
+    genMCV_path = input(
+        'Please provide the full path to the GenMCV folder: '
+        ' \n\t\tWARNING: Not Validated!!!'
+    )
+    if genMCV_path[len(genMCV_path)-len(SLASH):len(genMCV_path)] != SLASH:
+        config.set('GenMCV', 'root', genMCV_script + SLASH)
+        config.set('GenMCV', 'folder', genMCV_path + SLASH)
+        config.set('GenMCV', 'templates', genMCV_path + SLASH + 'templates' + SLASH)
+    else:
+        config.set('GenMCV', 'root', genMCV_script)
+        config.set('GenMCV', 'folder', genMCV_path)
+        config.set('GenMCV', 'templates', genMCV_path + 'templates')
+    
 class objData(object):
     def __init__(self, appl_name, object_name):
         sys.path.append('./web2py')
