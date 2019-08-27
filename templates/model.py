@@ -2,8 +2,8 @@ __author__ = 'graham'
 
 
 from smodel import Smodel
-from gluon.dal import Field
-from gluon.validators import IS_NOT_EMPTY, IS_EMAIL, IS_LENGTH
+from web2py.gluon.dal import Field
+from web2py.gluon.validators import IS_NOT_EMPTY, IS_EMAIL, IS_LENGTH
 
 
 class $obj_Name(Smodel):
