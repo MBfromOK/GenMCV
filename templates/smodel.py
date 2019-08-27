@@ -1,8 +1,8 @@
 __author__ = 'graham'
 
 
-from gluon import current
-from gluon.dal import DAL
+from web2py.gluon import current
+from web2py.gluon.dal import DAL
 
 
 class Smodel(object):
