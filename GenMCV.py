@@ -981,12 +981,12 @@ def gcontr(appl_name, object_name):
     if hasOneflag:
         hasOneindex = 0
         hOfields = dict(obj_name=lobj_n)
-        hOfile = open('./gener/templates/hasOneShow.py', 'r')
+        hOfile = open('.' + SLASH + 'GenMCV' + SLASH + 'templates' + SLASH + 'hasOneShow.py', 'r')
         hOdata = hOfile.read()
         hOShow = Template(hOdata).substitute(hOfields)
         hOfile.close()
         print(hOShow)
-        hOCfile = open('./gener/templates/hasOneCreate.py', 'r')
+        hOCfile = open('.' + SLASH + 'GenMCV' + SLASH + 'templates' + SLASH + 'hasOneCreate.py', 'r')
         hOCdata = hOCfile.read()
         hOCreate = Template(hOCdata).substitute(hOfields)
         hOCfile.close()
@@ -1008,7 +1008,7 @@ def gcontr(appl_name, object_name):
     if hasManyflag:
         hasManyindex = 0
         hMfields = dict(obj_name=lobj_n)
-        hMfile = open('./gener/templates/hasManyShow.py', 'r')
+        hMfile = open('.' + SLASH + 'GenMCV' + SLASH + 'templates' + SLASH + 'hasManyShow.py', 'r')
         hMdata = hMfile.read()
         hMShow = Template(hMdata).substitute(hMfields)
         hMfile.close()
@@ -1033,7 +1033,7 @@ def gcontr(appl_name, object_name):
     iMany = ' '
     if isManyflag:
         isManyfields = dict(obj_name=lobj_n, obj_Name=lobj_N)
-        iMfile = open('./gener/templates/isMany.py', 'r')
+        iMfile = open('.' + SLASH + 'GenMCV' + SLASH + 'templates' + SLASH + 'isMany.py', 'r')
         iMdata = iMfile.read()
         iMany = Template(iMdata).substitute(isManyfields)
         iMfile.close()
