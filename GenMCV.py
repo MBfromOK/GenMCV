@@ -188,8 +188,8 @@ def makehmfields(appl_name, oname, hname, hName):
 None defined
 {{pass}}
 """)
-    print 'hmf str'
-    print hmf_str
+    print('hmf str')
+    print(hmf_str)
     return hmf_str
 
 
@@ -198,7 +198,7 @@ def gview(appl_name, object_name):
 # first get the relevant class object
 # todo - note that path is hard-coded for the moment,
 # as is the object name
-#    print sys.path
+#    print(sys.path)
 # use objData
     objD = objData(appl_name, object_name)
     app_root = objD.app_root
@@ -334,8 +334,8 @@ def gview(appl_name, object_name):
 </div>
 """)
 #
-#    print 'list-str'
-#    print list_str
+#    print('list-str')
+#    print(list_str)
 #    viewfile = open('../templates/views/index.html', 'r')
 #    view = viewfile.read()
     outfile = open(appl_file_path + 'views' + SLASH + tname + SLASH + 'list.html', 'w')
@@ -531,8 +531,8 @@ var """ + obj_name + """LoadedFromSelect = true;
     if hasManyflag:
         for hmname in obj_instance.hasMany:
             hmName = hmname[0].upper() + hmname[1:]
-            print 'hasmany '
-            print hmName
+            print('hasmany ')
+            print(hmName)
             fd_strhm.append("""\
 <!--- hasMany --->
 <div>
@@ -590,7 +590,7 @@ doPopOwner""" + hmName + """ = dopop""" + obj_Name + hmName + """;
 """)
 #  ************************* the hasMany's fields go here
 #            tests = makehmfields(appl_name, obj_name, hmname, hmName)
-#            print tests
+#            print(tests)
 #            fd_str2.append(tests)
             fd_strhm.append(makehmfields(appl_name, obj_name, hmname, hmName))
             fd_strhm.append("""\
@@ -598,20 +598,20 @@ doPopOwner""" + hmName + """ = dopop""" + obj_Name + hmName + """;
 </div>
 <div id='""" + obj_name + hmname + """Div' style='display: none'></div>
 """)
-    outfile = open(appl_file_path + 'views/' + tname + '/formdata.html', 'w')
+    outfile = open(appl_file_path + 'views' + SLASH + tname + SLASH + 'formdata.html', 'w')
     for ent in fd_str:
         outfile.write(ent)
     for ent in fd_strhm:
         if isinstance(ent, str):
             outfile.write(ent)
         elif isinstance(ent, list):
-#            print ent
+#            print(ent)
             for lent in ent:
-#                print 'in lent '
-#                print lent
+#                print('in lent ')
+#                print(lent)
                 outfile.write(lent)
             else:
-                print 'error'
+                print('error')
 #    for ent in fd_str3:
 #        outfile.write(ent)
 #    outfile.close()
@@ -816,17 +816,17 @@ $(function() {
 """)
     outfile = open(appl_file_path + 'views' + SLASH + tname + SLASH + 'show.html', 'w')
     for ent in sh_str:
-#        print type(ent)
+#        print(type(ent))
         if isinstance(ent, str):
             outfile.write(ent)
         elif isinstance(ent, list):
-#            print ent
+#            print(ent)
             for lent in ent:
-#                print 'in lent '
-#                print lent
+#                print('in lent ')
+#                print(lent)
                 outfile.write(lent)
             else:
-                print 'error'
+                print('error')
 
 
     outfile.close()
@@ -968,7 +968,7 @@ def gcontr(appl_name, object_name):
     cont = cfile.read()
     fields_to_use = dict(obj_name=lobj_n, obj_Name=lobj_N)
     g1controller = Template(cont).substitute(fields_to_use)
-#    print gcontroller
+#    print(gcontroller)
 # now deal with hasOnes....
     hasOneflag = objD.hasOneflag
     hasManyflag = objD.hasManyflag
@@ -977,7 +977,7 @@ def gcontr(appl_name, object_name):
     hOShow = ' '
     hOCreate = ' '
     hOimports = []
-    print hOShow
+    print(hOShow)
     if hasOneflag:
         hasOneindex = 0
         hOfields = dict(obj_name=lobj_n)
@@ -985,15 +985,15 @@ def gcontr(appl_name, object_name):
         hOdata = hOfile.read()
         hOShow = Template(hOdata).substitute(hOfields)
         hOfile.close()
-        print hOShow
+        print(hOShow)
         hOCfile = open('./gener/templates/hasOneCreate.py', 'r')
         hOCdata = hOCfile.read()
         hOCreate = Template(hOCdata).substitute(hOfields)
         hOCfile.close()
-        print hOCreate
+        print(hOCreate)
         for hO in obj_instance.hasOne:
             HO = hO[0].upper() + hO[1:]
-            print hOimports
+            print(hOimports)
             hOimports.append("from " + hO + " import " + HO)
 #            horeplace = dict(hasOneimports=hOimports, hasOneShow="the cat sat on the mat")
         hOimpall = '\n'.join(hOimports)
@@ -1012,15 +1012,15 @@ def gcontr(appl_name, object_name):
         hMdata = hMfile.read()
         hMShow = Template(hMdata).substitute(hMfields)
         hMfile.close()
-        print hMShow
+        print(hMShow)
         hMCfile = open('./gener/templates/hasManyCreate.py', 'r')
         hMCdata = hMCfile.read()
         hMCreate = Template(hMCdata).substitute(hMfields)
         hMCfile.close()
-        print hMCreate
+        print(hMCreate)
         for hM in obj_instance.hasMany:
             HM = hM[0].upper() + hM[1:]
-            print hMimports
+            print(hMimports)
             hMimports.append("from " + hM + " import " + HM)
 #            horeplace = dict(hasOneimports=hOimports, hasOneShow="the cat sat on the mat")
         hMimpall = '\n'.join(hMimports)
@@ -1037,7 +1037,7 @@ def gcontr(appl_name, object_name):
         iMdata = iMfile.read()
         iMany = Template(iMdata).substitute(isManyfields)
         iMfile.close()
-        print iMany
+        print(iMany)
         imreplace = dict(isMany=iMany)
     else:
         imreplace = dict(isMany='')
@@ -1048,7 +1048,7 @@ def gcontr(appl_name, object_name):
     outfile.write(g2controller)
     outfile.close()
     cfile.close()
-    print hOimports
+    print(hOimports)
 
     return
 
@@ -1073,27 +1073,27 @@ def gmodel(appl_name, object_name):
     cont = mfile.read()
     fields_to_use = dict(obj_name=lobj_n, obj_Name=lobj_N)
     gmodel = Template(cont).substitute(fields_to_use)
-#    print gmodel
+#    print(gmodel)
     outfile.write(gmodel)
     outfile.close()
     mfile.close()
     return
 
-print 'Gener can create a skeleton model (in the modules directory) and controller'
-print 'in the controller directory using the model name you give it'
-print 'Additionally after you have entered the define_table lines to describe the'
-print 'structure of the database table, Gener can create a set of default views'
-app_name = raw_input('please enter application name : ')
-lmodel = raw_input('enter model name : ')
-options = raw_input('create model (M), controller(C), both (MC) or set of views (V) : ')
+print('Gener can create a skeleton model (in the modules directory) and controller')
+print('in the controller directory using the model name you give it')
+print('Additionally after you have entered the define_table lines to describe the')
+print('structure of the database table, Gener can create a set of default views')
+app_name = input('please enter application name : ')
+lmodel = input('enter model name : ')
+options = input('create model (M), controller(C), both (MC) or set of views (V) : ').lower()
 create_model = False
 create_view = False
 create_contr = False
-if options == 'M' or options == 'MC':
+if options == 'm' or options == 'mc':
     create_model = True
-elif options == 'C' or options == 'MC':
+elif options == 'c' or options == 'mc':
     create_contr = True
-elif options == 'V':
+elif options == 'v':
         create_view = True
 if create_model:
     gmodel(app_name, lmodel)
@@ -1102,9 +1102,9 @@ if create_contr:
 if create_view:
     gview(app_name, lmodel)
 if not create_model and not create_contr and not create_view :
-        print 'please try again'
+        print('please try again')
 #gview('supplier')
 #gmodel('supplier')
 #gcontr('supplier')
 
-print 'end'
+print('end')
